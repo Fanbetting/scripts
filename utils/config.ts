@@ -7,8 +7,8 @@ export const network: "testnet" | "localnet" = "localnet";
 
 export const price = 10000;
 
-export const resetDelay = 100;
-export const revealDelay = 1000;
+export const resetDelay = network == "localnet" ? 1 : 200;
+export const revealDelay = network == "localnet" ? 1 : 1000;
 
 export const algorandClient =
   network == "localnet"

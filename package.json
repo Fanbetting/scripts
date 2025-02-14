@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bootstrap": "ts-node src/bootstrap.ts"
+    "bootstrap": "ts-node src/bootstrap.ts",
+    "commit": "ts-node src/commit.ts",
+    "reveal": "ts-node src/reveal.ts"
   },
   "author": "",
   "license": "ISC",
