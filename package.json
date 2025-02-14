@@ -1,0 +1,20 @@
+{
+  "name": "fanbet-scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bootstrap": "ts-node src/bootstrap.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@algorandfoundation/algokit-utils": "^8.1.0",
+    "@types/node": "^22.13.4",
+    "algosdk": "^3.2.0",
+    "dotenv": "^16.4.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
