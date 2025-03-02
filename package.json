@@ -5,8 +5,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "bootstrap": "ts-node src/bootstrap.ts",
+    "purchase": "ts-node src/purchase.ts",
     "commit": "ts-node src/commit.ts",
-    "reveal": "ts-node src/reveal.ts"
+    "reveal": "ts-node src/reveal.ts",
+    "reset": "ts-node src/reset.ts",
+    "copy": "cp ../contracts/smart_contracts/artifacts/fanbet_lottery/FanbetLottery.arc32.json dist/",
+    "generate": "npm run copy && npx tsx src/generate.ts"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +22,8 @@
     "dotenv": "^16.4.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@algorandfoundation/algokit-client-generator": "^4.0.8"
   }
 }

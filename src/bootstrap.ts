@@ -1,4 +1,3 @@
-import { AppDetails } from "@algorandfoundation/algokit-utils/types/app-client";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import {
   algorandClient,
@@ -12,23 +11,21 @@ import {
   RANDONMESS_BEACON_APP_ID,
 } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
+import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
 async function bootstrap() {
   const deployer = algorandClient.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+    process.env.DEPLOYER_MNEMONIC!,
   );
 
-  const suggestedParams = await algorandClient.client.algod
-    .getTransactionParams()
-    .do();
-
-  const lotteryClient = new FanbetLotteryClient(
+  const lotteryClient = algorandClient.client.getTypedAppClientById(
+    FanbetLotteryClient,
     {
-      resolveBy: "id",
-      id: LOTTERY_APP_ID,
-      sender: deployer,
-    } as AppDetails,
-    algorandClient.client.algod
+      appId: BigInt(LOTTERY_APP_ID),
+      appName: "FANBET LOTTERY APP",
+      defaultSender: deployer.addr,
+      defaultSigner: deployer.signer,
+    },
   );
 
   const { assetId } = await algorandClient.send.assetCreate({
@@ -45,27 +42,23 @@ async function bootstrap() {
 
   await algorandClient.send.payment({
     receiver: LOTTERY_APP_ADDRESS,
-    amount: AlgoAmount.Algos(0.5),
+    amount: AlgoAmount.Algos(10),
     sender: deployer,
     signer: deployer,
   });
 
-  await lotteryClient.bootstrap(
-    {
+  await lotteryClient.send.bootstrap({
+    args: {
       price,
+      assetId,
       resetDelay,
       revealDelay,
-      assetId,
-      beaconAppId: RANDONMESS_BEACON_APP_ID,
+      decimals: 4,
+      beaconId: RANDONMESS_BEACON_APP_ID,
     },
-    {
-      assets: [Number(assetId)],
-      sendParams: {
-        fee: AlgoAmount.MicroAlgos(Number(suggestedParams.minFee) * 2),
-      },
-      sender: deployer,
-    }
-  );
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
+    assetReferences: [assetId],
+  });
 }
 
 bootstrap()

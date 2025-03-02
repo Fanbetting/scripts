@@ -1,37 +1,29 @@
-import { AppDetails } from "@algorandfoundation/algokit-utils/types/app-client";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorandClient } from "../utils/config";
 import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
+import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
 async function commit() {
   const deployer = algorandClient.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+    process.env.DEPLOYER_MNEMONIC!,
   );
 
-  const suggestedParams = await algorandClient.client.algod
-    .getTransactionParams()
-    .do();
-
-  const lotteryClient = new FanbetLotteryClient(
+  const lotteryClient = algorandClient.client.getTypedAppClientById(
+    FanbetLotteryClient,
     {
-      resolveBy: "id",
-      id: LOTTERY_APP_ID,
-      sender: deployer,
-    } as AppDetails,
-    algorandClient.client.algod
+      appId: BigInt(LOTTERY_APP_ID),
+      appName: "FANBET LOTTERY APP",
+      defaultSender: deployer.addr,
+      defaultSigner: deployer.signer,
+    },
   );
 
-  await lotteryClient.submitCommit(
-    {},
-    {
-      apps: [RANDONMESS_BEACON_APP_ID],
-      sendParams: {
-        fee: AlgoAmount.MicroAlgos(Number(suggestedParams.minFee) * 2),
-      },
-      sender: deployer,
-    }
-  );
+  await lotteryClient.send.submitCommit({
+    args: {},
+    appReferences: [BigInt(RANDONMESS_BEACON_APP_ID)],
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
+  });
 }
 
 commit()
