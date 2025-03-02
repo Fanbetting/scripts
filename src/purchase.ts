@@ -20,7 +20,7 @@ async function purchase() {
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();
-  const ticketToken = await lotteryClient.state.global.purchaseToken();
+  const ticketToken = await lotteryClient.state.global.ticketToken();
 
   if (!ticketPrice) {
     throw new Error("Invalid Ticket Price");

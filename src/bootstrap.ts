@@ -1,9 +1,10 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import {
   algorandClient,
+  payoutDuration,
   price,
-  resetDelay,
-  revealDelay,
+  revealDuration,
+  submissionsDuration,
 } from "../utils/config";
 import {
   LOTTERY_APP_ADDRESS,
@@ -51,8 +52,9 @@ async function bootstrap() {
     args: {
       price,
       assetId,
-      resetDelay,
-      revealDelay,
+      payoutDuration,
+      revealDuration,
+      submissionsDuration,
       decimals: 4,
       beaconId: RANDONMESS_BEACON_APP_ID,
     },
