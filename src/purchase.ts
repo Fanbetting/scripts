@@ -1,6 +1,6 @@
 import { decodeAddress } from "algosdk";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorandClient } from "../utils/config";
+import { algorandClient } from "../utils/constants";
 import { LOTTERY_APP_ADDRESS, LOTTERY_APP_ID } from "../utils/constants";
 import { BoxReference } from "@algorandfoundation/algokit-utils/types/app-manager";
 

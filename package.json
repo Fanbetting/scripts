@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "bootstrap": "ts-node src/bootstrap.ts",
     "purchase": "ts-node src/purchase.ts",
+    "payout": "ts-node src/payout.ts",
     "commit": "ts-node src/commit.ts",
     "reveal": "ts-node src/reveal.ts",
     "reset": "ts-node src/reset.ts",

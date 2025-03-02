@@ -1,5 +1,5 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorandClient } from "../utils/config";
+import { algorandClient } from "../utils/constants";
 import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";

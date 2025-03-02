@@ -1,10 +1,8 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorandClient } from "../utils/constants";
-import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
-import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
-import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
+import { LOTTERY_APP_ID } from "../utils/constants";
 
-async function commit() {
+async function payout() {
   const deployer = algorandClient.account.fromMnemonic(
     process.env.DEPLOYER_MNEMONIC!,
   );
@@ -19,13 +17,18 @@ async function commit() {
     },
   );
 
-  await lotteryClient.send.submitCommit({
+  const ticketToken = await lotteryClient.state.global.ticketToken();
+
+  if (!ticketToken) {
+    throw new Error("Could not get purchase token");
+  }
+
+  await lotteryClient.send.openPayout({
     args: {},
-    appReferences: [BigInt(RANDONMESS_BEACON_APP_ID)],
-    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
+    assetReferences: [ticketToken],
   });
 }
 
-commit()
-  .then(() => console.log("Committed"))
+payout()
+  .then(() => console.log("Enabled Payout"))
   .catch(console.error);

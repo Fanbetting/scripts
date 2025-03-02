@@ -5,7 +5,7 @@ import {
   price,
   revealDuration,
   submissionsDuration,
-} from "../utils/config";
+} from "../utils/constants";
 import {
   LOTTERY_APP_ADDRESS,
   LOTTERY_APP_ID,
