@@ -1,12 +1,22 @@
-import { decodeAddress } from "algosdk";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorandClient } from "../utils/constants";
 import { LOTTERY_APP_ADDRESS, LOTTERY_APP_ID } from "../utils/constants";
-import { BoxReference } from "@algorandfoundation/algokit-utils/types/app-manager";
+import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
+import { generateTickets } from "../utils/helpers";
+
+const NUMBER_OF_TICKETS = 20;
 
 async function purchase() {
+  const dispenser = await algorandClient.account.dispenserFromEnvironment();
   const deployer = algorandClient.account.fromMnemonic(
     process.env.DEPLOYER_MNEMONIC!,
+  );
+
+  const buyer = algorandClient.account.random();
+  await algorandClient.account.ensureFunded(
+    buyer,
+    dispenser,
+    new AlgoAmount({ algo: 100 }),
   );
 
   const lotteryClient = algorandClient.client.getTypedAppClientById(
@@ -14,8 +24,8 @@ async function purchase() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: buyer.addr,
+      defaultSigner: buyer.signer,
     },
   );
 
@@ -30,34 +40,57 @@ async function purchase() {
     throw new Error("Invalid Ticket Token");
   }
 
-  const purchaseAmount = Number(ticketPrice) * 1e4;
-  const transferTxn = await algorandClient.createTransaction.assetTransfer({
+  await algorandClient.send.assetOptIn({
     assetId: ticketToken,
-    sender: deployer.addr,
-    receiver: LOTTERY_APP_ADDRESS,
-    amount: BigInt(purchaseAmount),
+    sender: buyer.addr,
+    signer: buyer.signer,
   });
 
-  const encoder = new TextEncoder();
+  await algorandClient.send.assetTransfer({
+    assetId: ticketToken,
+    receiver: buyer.addr,
+    sender: deployer.addr,
+    signer: deployer.signer,
+    amount: ticketPrice * BigInt(NUMBER_OF_TICKETS * 10),
+  });
 
-  const boxRef: BoxReference = {
-    appId: BigInt(LOTTERY_APP_ID),
-    name: new Uint8Array([
-      ...encoder.encode("p_"),
-      ...decodeAddress(deployer.addr.toString()).publicKey,
-    ]),
-  };
+  const storageCost = await lotteryClient.getStorageCost({
+    args: {
+      numOfTickets: NUMBER_OF_TICKETS,
+    },
+  });
+
+  console.log(`Storage Cost: ${storageCost}`);
+
+  const paymentAmount = new AlgoAmount({ microAlgos: storageCost });
+  const paymentTxn = await algorandClient.createTransaction.payment({
+    receiver: lotteryClient.appAddress,
+    amount: paymentAmount,
+    sender: buyer.addr,
+  });
+
+  const transferAmount = ticketPrice * BigInt(NUMBER_OF_TICKETS);
+  const transferTxn = await algorandClient.createTransaction.assetTransfer({
+    assetId: ticketToken,
+    sender: buyer.addr,
+    receiver: LOTTERY_APP_ADDRESS,
+    amount: transferAmount,
+  });
 
   await lotteryClient
     .newGroup()
-    .buyTicket({
+    .buyTickets({
       args: {
+        payTxn: paymentTxn,
         axferTxn: transferTxn,
-        guess: [4, 8, 12, 16, 20],
+        guesses: generateTickets(NUMBER_OF_TICKETS),
       },
-      boxReferences: [boxRef],
+      maxFee: new AlgoAmount({ microAlgos: 4000 + 500 * NUMBER_OF_TICKETS }),
     })
-    .send();
+    .send({
+      populateAppCallResources: true,
+      coverAppCallInnerTransactionFees: true,
+    });
 }
 
 purchase()

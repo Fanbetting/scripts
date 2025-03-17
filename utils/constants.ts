@@ -4,6 +4,9 @@ import { network } from "./config";
 export const LOTTERY_APP_ID =
   network == "localnet" ? 1002 : network == "testnet" ? 734952532 : 0;
 
+export const DISCOUNTER_APP_ID =
+  network == "localnet" ? 1004 : network == "testnet" ? 0 : 0;
+
 export const LOTTERY_APP_ADDRESS =
   network == "localnet"
     ? "O3VYQKJ45XILV2GVDO44LM2IGPUD2QYRXNFX5K4ZDC2B4BD4ZZXU5AQG24"
@@ -12,7 +15,7 @@ export const LOTTERY_APP_ADDRESS =
       : "";
 
 export const RANDONMESS_BEACON_APP_ID =
-  network == "localnet" ? 1004 : network == "testnet" ? 600011887 : 1615566206;
+  network == "localnet" ? 1005 : network == "testnet" ? 600011887 : 1615566206;
 
 export const price = 10000;
 

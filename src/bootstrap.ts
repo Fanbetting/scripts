@@ -1,6 +1,7 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import {
   algorandClient,
+  DISCOUNTER_APP_ID,
   payoutDuration,
   price,
   revealDuration,
@@ -56,6 +57,7 @@ async function bootstrap() {
       revealDuration,
       submissionsDuration,
       decimals: 4,
+      discountId: DISCOUNTER_APP_ID,
       beaconId: RANDONMESS_BEACON_APP_ID,
     },
     extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
