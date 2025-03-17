@@ -31,3 +31,24 @@ export const generateTickets = (numTickets: number): Ticket[] => {
 
   return tickets;
 };
+
+export function decodeTickets(data: Uint8Array): Ticket[] {
+  const ticketsLength = Buffer.from(data.slice(0, 2)).readIntBE(0, 2);
+
+  const tickets: Ticket[] = [];
+
+  for (let i = 0; i < ticketsLength; i++) {
+    const digits = data.slice(2 + i * 5, 2 + (i + 1) * 5);
+    const ticket: Ticket = [
+      digits[0],
+      digits[1],
+      digits[2],
+      digits[3],
+      digits[4],
+    ];
+
+    tickets.push(ticket);
+  }
+
+  return tickets;
+}

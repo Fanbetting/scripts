@@ -1,10 +1,10 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorandClient } from "../utils/constants";
-import { LOTTERY_APP_ADDRESS, LOTTERY_APP_ID } from "../utils/constants";
+import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { generateTickets } from "../utils/helpers";
 
-const NUMBER_OF_TICKETS = 1;
+const NUMBER_OF_TICKETS = 100;
 
 async function purchase() {
   const dispenser = await algorandClient.account.dispenserFromEnvironment();
@@ -71,7 +71,7 @@ async function purchase() {
   const transferTxn = await algorandClient.createTransaction.assetTransfer({
     assetId: ticketToken,
     sender: buyer.addr,
-    receiver: LOTTERY_APP_ADDRESS,
+    receiver: lotteryClient.appAddress,
     amount: transferAmount,
   });
 

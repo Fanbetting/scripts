@@ -7,11 +7,7 @@ import {
   revealDuration,
   submissionsDuration,
 } from "../utils/constants";
-import {
-  LOTTERY_APP_ADDRESS,
-  LOTTERY_APP_ID,
-  RANDONMESS_BEACON_APP_ID,
-} from "../utils/constants";
+import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
@@ -43,7 +39,7 @@ async function bootstrap() {
   });
 
   await algorandClient.send.payment({
-    receiver: LOTTERY_APP_ADDRESS,
+    receiver: lotteryClient.appAddress,
     amount: AlgoAmount.Algos(10),
     sender: deployer,
     signer: deployer,
