@@ -4,7 +4,7 @@ import { LOTTERY_APP_ADDRESS, LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { generateTickets } from "../utils/helpers";
 
-const NUMBER_OF_TICKETS = 20;
+const NUMBER_OF_TICKETS = 1;
 
 async function purchase() {
   const dispenser = await algorandClient.account.dispenserFromEnvironment();
@@ -16,7 +16,7 @@ async function purchase() {
   await algorandClient.account.ensureFunded(
     buyer,
     dispenser,
-    new AlgoAmount({ algo: 100 }),
+    new AlgoAmount({ algo: 10000000 }),
   );
 
   const lotteryClient = algorandClient.client.getTypedAppClientById(
@@ -60,8 +60,6 @@ async function purchase() {
     },
   });
 
-  console.log(`Storage Cost: ${storageCost}`);
-
   const paymentAmount = new AlgoAmount({ microAlgos: storageCost });
   const paymentTxn = await algorandClient.createTransaction.payment({
     receiver: lotteryClient.appAddress,
@@ -85,7 +83,7 @@ async function purchase() {
         axferTxn: transferTxn,
         guesses: generateTickets(NUMBER_OF_TICKETS),
       },
-      maxFee: new AlgoAmount({ microAlgos: 4000 + 500 * NUMBER_OF_TICKETS }),
+      maxFee: new AlgoAmount({ algos: 1 }),
     })
     .send({
       populateAppCallResources: true,
