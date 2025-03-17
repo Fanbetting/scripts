@@ -7,10 +7,13 @@
     "bootstrap": "ts-node src/bootstrap.ts",
     "purchase": "ts-node src/purchase.ts",
     "retrieve": "ts-node src/retrieve.ts",
+    "submit": "ts-node src/submit.ts",
     "payout": "ts-node src/payout.ts",
     "commit": "ts-node src/commit.ts",
     "reveal": "ts-node src/reveal.ts",
     "reset": "ts-node src/reset.ts",
+    "claim": "ts-node src/claim.ts",
+    "buy": "ts-node src/buy.ts",
     "copy": "cp ../contracts/smart_contracts/artifacts/fanbet_lottery/FanbetLottery.arc32.json ../contracts/smart_contracts/artifacts/fanbet_player/FanbetPlayer.arc32.json dist/",
     "generate": "npm run copy && npx tsx src/generate.ts"
   },
