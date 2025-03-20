@@ -1,13 +1,19 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
+import { FanbetDiscounterClient } from "../contracts/FanbetDiscounter";
 import {
   algorandClient,
-  DISCOUNTER_APP_ID,
   payoutDuration,
+  legacyDiscount,
+  regularDiscount,
   price,
   revealDuration,
   submissionsDuration,
+  LOTTERY_APP_ID,
+  DISCOUNTER_APP_ID,
+  RANDONMESS_BEACON_APP_ID,
+  REGISTRY_APP_ID,
+  LEGACY_HOLDERS,
 } from "../utils/constants";
-import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
@@ -21,6 +27,16 @@ async function bootstrap() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
+      defaultSender: deployer.addr,
+      defaultSigner: deployer.signer,
+    },
+  );
+
+  const discountClient = algorandClient.client.getTypedAppClientById(
+    FanbetDiscounterClient,
+    {
+      appId: BigInt(DISCOUNTER_APP_ID),
+      appName: "DISCOUNT APP",
       defaultSender: deployer.addr,
       defaultSigner: deployer.signer,
     },
@@ -40,7 +56,7 @@ async function bootstrap() {
 
   await algorandClient.send.payment({
     receiver: lotteryClient.appAddress,
-    amount: AlgoAmount.Algos(10),
+    amount: AlgoAmount.Algos(5),
     sender: deployer,
     signer: deployer,
   });
@@ -58,6 +74,46 @@ async function bootstrap() {
     },
     extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
     assetReferences: [assetId],
+  });
+
+  await algorandClient.send.payment({
+    receiver: discountClient.appAddress,
+    amount: AlgoAmount.Algos(5),
+    sender: deployer,
+    signer: deployer,
+  });
+
+  await discountClient.send.bootstrap({
+    args: {
+      legacyDiscount,
+      regularDiscount,
+      registryId: REGISTRY_APP_ID,
+    },
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
+  });
+
+  await discountClient.send.addLegacyHolders({
+    args: {
+      holders: LEGACY_HOLDERS.slice(0, 8),
+    },
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
+    populateAppCallResources: true,
+  });
+
+  await discountClient.send.addLegacyHolders({
+    args: {
+      holders: LEGACY_HOLDERS.slice(8),
+    },
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
+    populateAppCallResources: true,
+  });
+
+  await discountClient.send.addLegacyHolders({
+    args: {
+      holders: [deployer.addr.toString()],
+    },
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
+    populateAppCallResources: true,
   });
 }
 
