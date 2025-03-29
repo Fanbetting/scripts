@@ -13,6 +13,7 @@
     "reveal": "ts-node src/reveal.ts",
     "reset": "ts-node src/reset.ts",
     "claim": "ts-node src/claim.ts",
+    "flow": "ts-node src/flow.ts",
     "buy": "ts-node src/buy.ts",
     "copy": "cp ../contracts/smart_contracts/artifacts/fanbet_lottery/FanbetLottery.arc32.json ../contracts/smart_contracts/artifacts/fanbet_player/FanbetPlayer.arc32.json ../contracts/smart_contracts/artifacts/fanbet_discounter/FanbetDiscounter.arc32.json dist/",
     "generate": "npm run copy && npx tsx src/generate.ts"

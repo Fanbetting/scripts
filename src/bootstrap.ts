@@ -1,7 +1,7 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetDiscounterClient } from "../contracts/FanbetDiscounter";
 import {
-  algorandClient,
+  algorand,
   payoutDuration,
   legacyDiscount,
   regularDiscount,
@@ -13,16 +13,17 @@ import {
   RANDONMESS_BEACON_APP_ID,
   REGISTRY_APP_ID,
   LEGACY_HOLDERS,
+  getManagers,
 } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
 async function bootstrap() {
-  const deployer = algorandClient.account.fromMnemonic(
+  const deployer = algorand.account.fromMnemonic(
     process.env.DEPLOYER_MNEMONIC!,
   );
 
-  const lotteryClient = algorandClient.client.getTypedAppClientById(
+  const lotteryClient = algorand.client.getTypedAppClientById(
     FanbetLotteryClient,
     {
       appId: BigInt(LOTTERY_APP_ID),
@@ -32,7 +33,7 @@ async function bootstrap() {
     },
   );
 
-  const discountClient = algorandClient.client.getTypedAppClientById(
+  const discountClient = algorand.client.getTypedAppClientById(
     FanbetDiscounterClient,
     {
       appId: BigInt(DISCOUNTER_APP_ID),
@@ -42,7 +43,7 @@ async function bootstrap() {
     },
   );
 
-  const { assetId } = await algorandClient.send.assetCreate({
+  const { assetId } = await algorand.send.assetCreate({
     decimals: 4,
     total: BigInt(1100000000000),
     defaultFrozen: false,
@@ -50,13 +51,6 @@ async function bootstrap() {
     assetName: "FanBet",
     reserve: deployer,
     unitName: "FBET",
-    sender: deployer,
-    signer: deployer,
-  });
-
-  await algorandClient.send.payment({
-    receiver: lotteryClient.appAddress,
-    amount: AlgoAmount.Algos(5),
     sender: deployer,
     signer: deployer,
   });
@@ -76,9 +70,20 @@ async function bootstrap() {
     assetReferences: [assetId],
   });
 
-  await algorandClient.send.payment({
+  const managers = await getManagers(assetId);
+
+  for (let i = 0; i < managers.length; i++) {
+    await lotteryClient.send.updateManagerAccount({
+      args: {
+        newManager: managers[i],
+        index: i,
+      },
+    });
+  }
+
+  await algorand.send.payment({
     receiver: discountClient.appAddress,
-    amount: AlgoAmount.Algos(5),
+    amount: AlgoAmount.Algos(1),
     sender: deployer,
     signer: deployer,
   });

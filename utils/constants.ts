@@ -1,22 +1,24 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils";
 import { network } from "./config";
+import { WASI } from "wasi";
+import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 
 export const LOTTERY_APP_ID =
   network == "localnet" ? 1002 : network == "testnet" ? 736077070 : 0;
 
 export const DISCOUNTER_APP_ID =
-  network == "localnet" ? 1004 : network == "testnet" ? 736077084 : 0;
+  network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 0;
 
 export const RANDONMESS_BEACON_APP_ID =
-  network == "localnet" ? 1005 : network == "testnet" ? 600011887 : 1615566206;
+  network == "localnet" ? 1007 : network == "testnet" ? 600011887 : 1615566206;
 
 export const REGISTRY_APP_ID =
-  network == "localnet" ? 0 : network == "testnet" ? 84366825 : 760937186;
+  network == "localnet" ? 1008 : network == "testnet" ? 84366825 : 760937186;
 
 export const legacyDiscount = 10;
 export const regularDiscount = 5;
 
-export const price = 10000;
+export const price = network == "localnet" ? 10 : 10000;
 
 export const payoutDuration =
   network == "localnet" ? 1 : network == "testnet" ? 100 : 4000;
@@ -27,7 +29,7 @@ export const submissionsDuration =
 export const revealDuration =
   network == "localnet" ? 1 : network == "testnet" ? 25 : 1000;
 
-export const algorandClient =
+export const algorand =
   network == "localnet"
     ? AlgorandClient.defaultLocalNet()
     : AlgorandClient.testNet();
@@ -45,3 +47,32 @@ export const LEGACY_HOLDERS = [
   "KPJZ7JYPKL3JAYVTP3M5DMQAXTW5Y7XKN74HDJJWIPOHZGIYDBPJSVMVTU",
   "TJXU3MFEK4PJHQNNR5XBPRIMCYWU3FCS6GYPAMSUFAJ4YUKVNCL5NYV26M",
 ];
+
+const MANAGERS = [
+  "PIJYCQY2ZNTO63OTP7PZ6MPNNAUHRVSDAM7EDGAPTUVJK4YKYVSFMKZBLM",
+  "TIA2KQAOK6AZTROWSUBECAD2AJIYBZLOH27745T5D4SA6SMAJETQF3KJTI",
+];
+
+export const getManagers = async (ticketToken: bigint) => {
+  if (network != "localnet") {
+    return MANAGERS;
+  }
+
+  const managers = [algorand.account.random(), algorand.account.random()];
+  const dispenser = await algorand.account.localNetDispenser();
+
+  for (const manager of managers) {
+    await algorand.account.ensureFunded(
+      manager,
+      dispenser,
+      AlgoAmount.Algo(100),
+    );
+
+    await algorand.send.assetOptIn({
+      sender: manager,
+      assetId: ticketToken,
+    });
+  }
+
+  return Array.from(managers.map((manager) => manager.addr.toString()));
+};

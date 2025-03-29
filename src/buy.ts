@@ -1,27 +1,27 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorandClient } from "../utils/constants";
+import { algorand } from "../utils/constants";
 import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { generateTickets } from "../utils/helpers";
 
 async function buy() {
-  const deployer = algorandClient.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!,
+  const deployer = algorand.account.fromMnemonic(
+    process.env.DEPLOYER_MNEMONIC!
   );
 
-  await algorandClient.account.ensureFundedFromEnvironment(
+  await algorand.account.ensureFundedFromEnvironment(
     deployer.addr,
-    new AlgoAmount({ algos: 1000000 }),
+    new AlgoAmount({ algos: 1000000 })
   );
 
-  const lotteryClient = algorandClient.client.getTypedAppClientById(
+  const lotteryClient = algorand.client.getTypedAppClientById(
     FanbetLotteryClient,
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
       defaultSender: deployer.addr,
       defaultSigner: deployer.signer,
-    },
+    }
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -49,14 +49,14 @@ async function buy() {
   });
 
   const paymentAmount = new AlgoAmount({ microAlgos: storageCost });
-  const paymentTxn = await algorandClient.createTransaction.payment({
+  const paymentTxn = await algorand.createTransaction.payment({
     receiver: lotteryClient.appAddress,
     amount: paymentAmount,
     sender: deployer.addr,
   });
 
   const transferAmount = ticketPrice * BigInt(CURR_NUMBER);
-  const transferTxn = await algorandClient.createTransaction.assetTransfer({
+  const transferTxn = await algorand.createTransaction.assetTransfer({
     assetId: ticketToken,
     sender: deployer.addr,
     receiver: lotteryClient.appAddress,

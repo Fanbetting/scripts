@@ -1,28 +1,28 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetPlayerClient } from "../contracts/FanbetPlayer";
-import { algorandClient } from "../utils/constants";
+import { algorand } from "../utils/constants";
 import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { decodeAddress } from "algosdk";
 
 async function retrieve() {
-  const deployer = algorandClient.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!,
+  const deployer = algorand.account.fromMnemonic(
+    process.env.DEPLOYER_MNEMONIC!
   );
 
-  await algorandClient.account.ensureFundedFromEnvironment(
+  await algorand.account.ensureFundedFromEnvironment(
     deployer.addr,
-    new AlgoAmount({ algos: 1000000 }),
+    new AlgoAmount({ algos: 1000000 })
   );
 
-  const lotteryClient = algorandClient.client.getTypedAppClientById(
+  const lotteryClient = algorand.client.getTypedAppClientById(
     FanbetLotteryClient,
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
       defaultSender: deployer.addr,
       defaultSigner: deployer.signer,
-    },
+    }
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -47,20 +47,21 @@ async function retrieve() {
     ...decodeAddress(deployer.addr.toString()).publicKey,
   ]);
 
-  const playerBoxValue =
-    await lotteryClient.appClient.getBoxValue(playerBoxRef);
+  const playerBoxValue = await lotteryClient.appClient.getBoxValue(
+    playerBoxRef
+  );
 
   const playerDataview = new DataView(playerBoxValue.buffer);
   const playerAppID = BigInt(playerDataview.getBigUint64(0).toString());
 
-  const playerClient = algorandClient.client.getTypedAppClientById(
+  const playerClient = algorand.client.getTypedAppClientById(
     FanbetPlayerClient,
     {
       appId: playerAppID,
       appName: "FANBET PLAYER",
       defaultSender: deployer.addr,
       defaultSigner: deployer.signer,
-    },
+    }
   );
 
   const ticketsLength = await playerClient.getTicketsLength({
