@@ -2,7 +2,7 @@ import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorand } from "../utils/constants";
 import { LOTTERY_APP_ID } from "../utils/constants";
 
-async function commit() {
+async function open() {
   const executor = algorand.account.fromMnemonic(
     process.env.EXECUTOR_MNEMONIC!
   );
@@ -17,12 +17,18 @@ async function commit() {
     }
   );
 
-  await lotteryClient.send.submitCommit({
+  const ticketToken = await lotteryClient.state.global.ticketToken();
+
+  if (!ticketToken) {
+    throw new Error("Could not get purchase token");
+  }
+
+  await lotteryClient.send.openPayout({
     args: {},
     populateAppCallResources: true,
   });
 }
 
-commit()
-  .then(() => console.log("Committed"))
+open()
+  .then(() => console.log("Opened Payout"))
   .catch(console.error);

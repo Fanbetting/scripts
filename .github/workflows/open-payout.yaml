@@ -1,0 +1,20 @@
+name: Open Payout
+
+on:
+  schedule:
+    - cron: "0 0 * * SUN" # Every Sunday at 00:00 UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts
+          cache: "npm"
+      - run: npm ci
+      - name: Open Payout for the Winners
+        run: npm run open
+        env:
+          EXECUTOR_MNEMONIC: ${{ secrets.EXECUTOR_MNEMONIC }}

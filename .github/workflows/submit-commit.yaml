@@ -1,0 +1,20 @@
+name: Submit Commit
+
+on:
+  schedule:
+    - cron: "30 23 * * FRI" # Every Friday at 23:30 UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts
+          cache: "npm"
+      - run: npm ci
+      - name: Submit Commit to Algorand Randomness Beacon
+        run: npm run commit
+        env:
+          EXECUTOR_MNEMONIC: ${{ secrets.EXECUTOR_MNEMONIC }}

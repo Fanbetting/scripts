@@ -25,10 +25,10 @@ async function payout() {
 
   await lotteryClient.send.openPayout({
     args: {},
-    assetReferences: [ticketToken],
+    populateAppCallResources: true,
   });
 }
 
 payout()
-  .then(() => console.log("Enabled Payout"))
+  .then(() => console.log("Paid Out Managers "))
   .catch(console.error);

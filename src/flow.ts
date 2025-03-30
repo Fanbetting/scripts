@@ -183,8 +183,8 @@ async function flow() {
 
   await lotteryClient.send.resetLottery({
     args: {},
-    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
     populateAppCallResources: true,
+    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
   });
 
   console.log("\n\n === Reset Lottery successfully === \n\n");

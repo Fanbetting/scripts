@@ -1,6 +1,6 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { algorand } from "../utils/constants";
-import { LOTTERY_APP_ID, RANDONMESS_BEACON_APP_ID } from "../utils/constants";
+import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
@@ -27,9 +27,8 @@ async function reset() {
 
   await lotteryClient.send.resetLottery({
     args: {},
-    appReferences: [BigInt(RANDONMESS_BEACON_APP_ID)],
+    populateAppCallResources: true,
     extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
-    assetReferences: [ticketToken],
   });
 }
 

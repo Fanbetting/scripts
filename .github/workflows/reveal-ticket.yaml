@@ -1,0 +1,20 @@
+name: Reveal Ticket
+
+on:
+  schedule:
+    - cron: "0 0 * * SAT" # Every Saturday at 00:00 UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts
+          cache: "npm"
+      - run: npm ci
+      - name: Reveal the Winning Ticket
+        run: npm run reveal
+        env:
+          EXECUTOR_MNEMONIC: ${{ secrets.EXECUTOR_MNEMONIC }}
