@@ -5,12 +5,12 @@ import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { generateTickets } from "../utils/helpers";
 
 async function buy() {
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   await algorand.account.ensureFundedFromEnvironment(
-    deployer.addr,
+    executor.addr,
     new AlgoAmount({ algos: 1000000 })
   );
 
@@ -19,8 +19,8 @@ async function buy() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
     }
   );
 
@@ -52,13 +52,13 @@ async function buy() {
   const paymentTxn = await algorand.createTransaction.payment({
     receiver: lotteryClient.appAddress,
     amount: paymentAmount,
-    sender: deployer.addr,
+    sender: executor.addr,
   });
 
   const transferAmount = ticketPrice * BigInt(CURR_NUMBER);
   const transferTxn = await algorand.createTransaction.assetTransfer({
     assetId: ticketToken,
-    sender: deployer.addr,
+    sender: executor.addr,
     receiver: lotteryClient.appAddress,
     amount: transferAmount,
   });

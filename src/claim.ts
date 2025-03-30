@@ -4,12 +4,12 @@ import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 
 async function claim() {
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   await algorand.account.ensureFundedFromEnvironment(
-    deployer.addr,
+    executor.addr,
     new AlgoAmount({ algos: 1000000 })
   );
 
@@ -18,8 +18,8 @@ async function claim() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
     }
   );
 

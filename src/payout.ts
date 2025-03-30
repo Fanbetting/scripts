@@ -3,8 +3,8 @@ import { algorand } from "../utils/constants";
 import { LOTTERY_APP_ID } from "../utils/constants";
 
 async function payout() {
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -12,8 +12,8 @@ async function payout() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
     }
   );
 

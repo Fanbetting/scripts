@@ -6,12 +6,12 @@ import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { decodeAddress } from "algosdk";
 
 async function retrieve() {
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   await algorand.account.ensureFundedFromEnvironment(
-    deployer.addr,
+    executor.addr,
     new AlgoAmount({ algos: 1000000 })
   );
 
@@ -20,8 +20,8 @@ async function retrieve() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
     }
   );
 
@@ -44,7 +44,7 @@ async function retrieve() {
   const encoder = new TextEncoder();
   const playerBoxRef = new Uint8Array([
     ...encoder.encode("p_"),
-    ...decodeAddress(deployer.addr.toString()).publicKey,
+    ...decodeAddress(executor.addr.toString()).publicKey,
   ]);
 
   const playerBoxValue = await lotteryClient.appClient.getBoxValue(
@@ -59,8 +59,8 @@ async function retrieve() {
     {
       appId: playerAppID,
       appName: "FANBET PLAYER",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
     }
   );
 

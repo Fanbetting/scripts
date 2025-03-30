@@ -8,15 +8,15 @@ const NUMBER_OF_TICKETS = 100;
 
 async function purchase() {
   const dispenser = await algorand.account.dispenserFromEnvironment();
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!,
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   const buyer = algorand.account.random();
   await algorand.account.ensureFunded(
     buyer,
     dispenser,
-    new AlgoAmount({ algo: 10000000 }),
+    new AlgoAmount({ algo: 10000000 })
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -26,7 +26,7 @@ async function purchase() {
       appName: "FANBET LOTTERY APP",
       defaultSender: buyer.addr,
       defaultSigner: buyer.signer,
-    },
+    }
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -49,8 +49,8 @@ async function purchase() {
   await algorand.send.assetTransfer({
     assetId: ticketToken,
     receiver: buyer.addr,
-    sender: deployer.addr,
-    signer: deployer.signer,
+    sender: executor.addr,
+    signer: executor.signer,
     amount: ticketPrice * BigInt(NUMBER_OF_TICKETS * 10),
   });
 

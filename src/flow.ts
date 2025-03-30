@@ -13,8 +13,8 @@ const players: (Address & TransactionSignerAccount & { account: Account })[] =
   [];
 
 async function flow() {
-  const deployer = algorand.account.fromMnemonic(
-    process.env.DEPLOYER_MNEMONIC!,
+  const executor = algorand.account.fromMnemonic(
+    process.env.EXECUTOR_MNEMONIC!
   );
 
   // TICKETS PURCHASE
@@ -31,7 +31,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      },
+      }
     );
 
     const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -45,7 +45,7 @@ async function flow() {
       throw new Error("Invalid Ticket Token");
     }
 
-    await prepareUser(player, deployer, ticketToken, ticketPrice);
+    await prepareUser(player, executor, ticketToken, ticketPrice);
 
     for (let i = 0; i < NUMBER_OF_TICKETS; i += 100) {
       const numberOfTickets =
@@ -96,9 +96,9 @@ async function flow() {
     {
       appId: BigInt(LOTTERY_APP_ID),
       appName: "FANBET LOTTERY APP",
-      defaultSender: deployer.addr,
-      defaultSigner: deployer.signer,
-    },
+      defaultSender: executor.addr,
+      defaultSigner: executor.signer,
+    }
   );
 
   // COMMIT
@@ -126,7 +126,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      },
+      }
     );
 
     // USERS SUBMIT TICKETS
@@ -165,7 +165,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      },
+      }
     );
 
     // USERS CLAIM REWARDS
@@ -196,16 +196,16 @@ flow()
 
 async function prepareUser(
   user: Address & TransactionSignerAccount & { account: Account },
-  deployer: Address & TransactionSignerAccount & { account: Account },
+  executor: Address & TransactionSignerAccount & { account: Account },
   ticketToken: bigint,
-  ticketPrice: bigint,
+  ticketPrice: bigint
 ) {
   const dispenser = await algorand.account.localNetDispenser();
 
   await algorand.account.ensureFunded(
     user.addr,
     dispenser.addr,
-    AlgoAmount.Algos(1000),
+    AlgoAmount.Algos(1000)
   );
 
   await algorand.send.assetOptIn({
@@ -217,8 +217,8 @@ async function prepareUser(
   await algorand.send.assetTransfer({
     assetId: ticketToken,
     receiver: user.addr,
-    sender: deployer.addr,
-    signer: deployer.signer,
+    sender: executor.addr,
+    signer: executor.signer,
     amount: ticketPrice * BigInt(NUMBER_OF_TICKETS),
   });
 }
