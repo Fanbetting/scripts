@@ -1,10 +1,9 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils";
 import { network } from "./config";
-import { WASI } from "wasi";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 
 export const LOTTERY_APP_ID =
-  network == "localnet" ? 1002 : network == "testnet" ? 736077070 : 0;
+  network == "localnet" ? 1002 : network == "testnet" ? 736604809 : 0;
 
 export const DISCOUNTER_APP_ID =
   network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 0;
