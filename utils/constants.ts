@@ -2,10 +2,10 @@ import { AlgorandClient } from "@algorandfoundation/algokit-utils";
 import { network } from "./config";
 
 export const LOTTERY_APP_ID =
-  network == "localnet" ? 1002 : network == "testnet" ? 736653573 : 0;
+  network == "localnet" ? 1002 : network == "testnet" ? 736653573 : 2881824977;
 
 export const DISCOUNTER_APP_ID =
-  network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 0;
+  network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;
 
 export const RANDONMESS_BEACON_APP_ID =
   network == "localnet" ? 1007 : network == "testnet" ? 600011887 : 1615566206;
@@ -30,7 +30,9 @@ export const revealDuration =
 export const algorand =
   network == "localnet"
     ? AlgorandClient.defaultLocalNet()
-    : AlgorandClient.testNet();
+    : network == "mainnet"
+      ? AlgorandClient.mainNet()
+      : AlgorandClient.testNet();
 
 export const LEGACY_HOLDERS = [
   "RSGDEUMXJHFI76AN4PCEXXI3456TRBSROZUZ6FAVYPF53HGUZONUHLRYKU",
