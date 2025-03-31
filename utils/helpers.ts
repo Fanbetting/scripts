@@ -3,7 +3,8 @@ import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { Account, Address, decodeAddress } from "algosdk";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetPlayerClient } from "../contracts/FanbetPlayer";
-import { algorand } from "./constants";
+import { algorand, MANAGERS } from "./constants";
+import { network } from "./config";
 
 type Ticket = [
   number | bigint,
@@ -130,3 +131,27 @@ export async function getTickets(
 
   return tickets;
 }
+
+export const getManagers = async (ticketToken: bigint) => {
+  if (network != "localnet") {
+    return MANAGERS;
+  }
+
+  const managers = [algorand.account.random(), algorand.account.random()];
+  const dispenser = await algorand.account.localNetDispenser();
+
+  for (const manager of managers) {
+    await algorand.account.ensureFunded(
+      manager,
+      dispenser,
+      AlgoAmount.Algo(100),
+    );
+
+    await algorand.send.assetOptIn({
+      sender: manager,
+      assetId: ticketToken,
+    });
+  }
+
+  return Array.from(managers.map((manager) => manager.addr.toString()));
+};

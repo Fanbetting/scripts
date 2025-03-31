@@ -1,6 +1,5 @@
 import { AlgorandClient } from "@algorandfoundation/algokit-utils";
 import { network } from "./config";
-import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 
 export const LOTTERY_APP_ID =
   network == "localnet" ? 1002 : network == "testnet" ? 736604809 : 0;
@@ -20,13 +19,13 @@ export const regularDiscount = 5;
 export const price = network == "localnet" ? 10 : 10000;
 
 export const payoutDuration =
-  network == "localnet" ? 1 : network == "testnet" ? 100 : 4000;
+  network == "localnet" ? 1 : network == "testnet" ? 100 : 10000;
 
 export const submissionsDuration =
-  network == "localnet" ? 1 : network == "testnet" ? 100 : 4000;
+  network == "localnet" ? 1 : network == "testnet" ? 100 : 10000;
 
 export const revealDuration =
-  network == "localnet" ? 1 : network == "testnet" ? 25 : 1000;
+  network == "localnet" ? 1 : network == "testnet" ? 25 : 200;
 
 export const algorand =
   network == "localnet"
@@ -47,31 +46,21 @@ export const LEGACY_HOLDERS = [
   "TJXU3MFEK4PJHQNNR5XBPRIMCYWU3FCS6GYPAMSUFAJ4YUKVNCL5NYV26M",
 ];
 
-const MANAGERS = [
+export const MANAGERS = [
   "PIJYCQY2ZNTO63OTP7PZ6MPNNAUHRVSDAM7EDGAPTUVJK4YKYVSFMKZBLM",
   "TIA2KQAOK6AZTROWSUBECAD2AJIYBZLOH27745T5D4SA6SMAJETQF3KJTI",
 ];
 
-export const getManagers = async (ticketToken: bigint) => {
-  if (network != "localnet") {
-    return MANAGERS;
-  }
+type Percent = {
+  threeMatch: bigint;
+  fourMatch: bigint;
+  fiveMatch: bigint;
+  managers: bigint;
+};
 
-  const managers = [algorand.account.random(), algorand.account.random()];
-  const dispenser = await algorand.account.localNetDispenser();
-
-  for (const manager of managers) {
-    await algorand.account.ensureFunded(
-      manager,
-      dispenser,
-      AlgoAmount.Algo(100),
-    );
-
-    await algorand.send.assetOptIn({
-      sender: manager,
-      assetId: ticketToken,
-    });
-  }
-
-  return Array.from(managers.map((manager) => manager.addr.toString()));
+export const PERCENTS: Percent = {
+  threeMatch: BigInt(10),
+  fourMatch: BigInt(25),
+  fiveMatch: BigInt(55),
+  managers: BigInt(10),
 };

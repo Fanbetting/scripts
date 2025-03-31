@@ -13,14 +13,15 @@ import {
   RANDONMESS_BEACON_APP_ID,
   REGISTRY_APP_ID,
   LEGACY_HOLDERS,
-  getManagers,
+  PERCENTS,
 } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
+import { getManagers } from "../utils/helpers";
 
 async function bootstrap() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -30,7 +31,7 @@ async function bootstrap() {
       appName: "FANBET LOTTERY APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const discountClient = algorand.client.getTypedAppClientById(
@@ -40,7 +41,7 @@ async function bootstrap() {
       appName: "DISCOUNT APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const { assetId } = await algorand.send.assetCreate({
@@ -65,6 +66,7 @@ async function bootstrap() {
       decimals: 4,
       discountId: DISCOUNTER_APP_ID,
       beaconId: RANDONMESS_BEACON_APP_ID,
+      allocationPercents: PERCENTS,
     },
     extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
     assetReferences: [assetId],

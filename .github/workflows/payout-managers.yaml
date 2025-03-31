@@ -2,7 +2,7 @@ name: Payout Managers
 
 on:
   schedule:
-    - cron: "30 0 * * SUN" # Every Sunday at 00:30 UTC
+    - cron: "15 0 * * SUN" # Every Sunday at 00:15 UTC
 
 jobs:
   build:

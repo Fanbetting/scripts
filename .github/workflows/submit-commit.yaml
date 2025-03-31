@@ -2,7 +2,7 @@ name: Submit Commit
 
 on:
   schedule:
-    - cron: "30 23 * * FRI" # Every Friday at 23:30 UTC
+    - cron: "45 23 * * FRI" # Every Friday at 23:45 UTC
 
 jobs:
   build:

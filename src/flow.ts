@@ -14,7 +14,7 @@ const players: (Address & TransactionSignerAccount & { account: Account })[] =
 
 async function flow() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   // TICKETS PURCHASE
@@ -31,7 +31,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      }
+      },
     );
 
     const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -98,7 +98,7 @@ async function flow() {
       appName: "FANBET LOTTERY APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   // COMMIT
@@ -126,7 +126,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      }
+      },
     );
 
     // USERS SUBMIT TICKETS
@@ -148,11 +148,22 @@ async function flow() {
   console.log("\n\n === Payout Opened successfully === \n\n");
 
   // MANAGER PAYOUT
-  await lotteryClient.send.payoutManagers({
-    args: {},
+  await lotteryClient.send.payoutManager({
+    args: {
+      index: 0,
+    },
     populateAppCallResources: true,
-    maxFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 5),
     coverAppCallInnerTransactionFees: true,
+    maxFee: AlgoAmount.Algo(1),
+  });
+
+  await lotteryClient.send.payoutManager({
+    args: {
+      index: 1,
+    },
+    populateAppCallResources: true,
+    coverAppCallInnerTransactionFees: true,
+    maxFee: AlgoAmount.Algo(1),
   });
 
   console.log("\n\n === Paid Out Managers successfully === \n\n");
@@ -165,7 +176,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      }
+      },
     );
 
     // USERS CLAIM REWARDS
@@ -198,14 +209,14 @@ async function prepareUser(
   user: Address & TransactionSignerAccount & { account: Account },
   executor: Address & TransactionSignerAccount & { account: Account },
   ticketToken: bigint,
-  ticketPrice: bigint
+  ticketPrice: bigint,
 ) {
   const dispenser = await algorand.account.localNetDispenser();
 
   await algorand.account.ensureFunded(
     user.addr,
     dispenser.addr,
-    AlgoAmount.Algos(1000)
+    AlgoAmount.Algos(1000),
   );
 
   await algorand.send.assetOptIn({
