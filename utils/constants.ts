@@ -1,5 +1,6 @@
-import { AlgorandClient } from "@algorandfoundation/algokit-utils";
 import { network } from "./config";
+
+export const FBET_ASSET_ID = 2456033705;
 
 export const LOTTERY_APP_ID =
   network == "localnet" ? 1002 : network == "testnet" ? 736653573 : 2881824977;
@@ -7,32 +8,29 @@ export const LOTTERY_APP_ID =
 export const DISCOUNTER_APP_ID =
   network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;
 
-export const RANDONMESS_BEACON_APP_ID =
+export const BEACON_APP_ID =
   network == "localnet" ? 1007 : network == "testnet" ? 600011887 : 1615566206;
 
 export const REGISTRY_APP_ID =
   network == "localnet" ? 1008 : network == "testnet" ? 84366825 : 760937186;
 
-export const legacyDiscount = 10;
-export const regularDiscount = 5;
+export const LEGACY_DISCOUNT = 10;
+export const REGULAR_DISCOUNT = 5;
 
-export const price = network == "localnet" ? 10 : 10000;
+export const DECIMALS = BigInt(4);
+export const PRICE = network == "localnet" ? 10 : 10000;
 
-export const payoutDuration =
+export const PAYOUT_DURATION =
   network == "localnet" ? 1 : network == "testnet" ? 100 : 10000;
 
-export const submissionsDuration =
+export const SUBMISSIONS_DURATION =
   network == "localnet" ? 1 : network == "testnet" ? 100 : 10000;
 
-export const revealDuration =
+export const REVEAL_DURATION =
   network == "localnet" ? 1 : network == "testnet" ? 25 : 200;
 
-export const algorand =
-  network == "localnet"
-    ? AlgorandClient.defaultLocalNet()
-    : network == "mainnet"
-      ? AlgorandClient.mainNet()
-      : AlgorandClient.testNet();
+export const ADMINISTRATOR_ADDRESS =
+  "UR6VYOZLCR3BUSGAJF5SQ7JSIKMLRDOEKRIOYLQTGAZFPXE4ZWAC27Y6IQ";
 
 export const LEGACY_HOLDERS = [
   "RSGDEUMXJHFI76AN4PCEXXI3456TRBSROZUZ6FAVYPF53HGUZONUHLRYKU",

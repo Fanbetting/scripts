@@ -11,7 +11,7 @@ type Ticket = [
   number | bigint,
   number | bigint,
   number | bigint,
-  number | bigint,
+  number | bigint
 ];
 
 const randomTicket = (): Ticket => {
@@ -63,7 +63,7 @@ export function decodeTickets(data: Uint8Array): Ticket[] {
 
 export async function getTickets(
   lotteryClient: FanbetLotteryClient,
-  player: Address & TransactionSignerAccount & { account: Account },
+  player: Address & TransactionSignerAccount & { account: Account }
 ) {
   const gameRound = await lotteryClient.state.global.gameRound();
 
@@ -82,7 +82,7 @@ export async function getTickets(
   ]);
 
   const present = boxes.some(
-    (box) => box.nameRaw.toString() == playerBox.toString(),
+    (box) => box.nameRaw.toString() == playerBox.toString()
   );
 
   if (present) {
@@ -98,7 +98,7 @@ export async function getTickets(
         appName: "FANBET PLAYER",
         defaultSender: player.addr,
         defaultSigner: player.signer,
-      },
+      }
     );
 
     const ticketsLength = await playerClient.getTicketsLength({
@@ -132,7 +132,7 @@ export async function getTickets(
   return tickets;
 }
 
-export const getManagers = async (ticketToken: bigint) => {
+export const getManagers = async (ticketToken: bigint | number) => {
   if (network != "localnet") {
     return MANAGERS;
   }
@@ -144,7 +144,7 @@ export const getManagers = async (ticketToken: bigint) => {
     await algorand.account.ensureFunded(
       manager,
       dispenser,
-      AlgoAmount.Algo(100),
+      AlgoAmount.Algo(100)
     );
 
     await algorand.send.assetOptIn({
