@@ -3,8 +3,8 @@ import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { Account, Address, decodeAddress } from "algosdk";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetPlayerClient } from "../contracts/FanbetPlayer";
-import { algorand, MANAGERS } from "./constants";
-import { network } from "./config";
+import { MANAGERS } from "./constants";
+import { algorand, network } from "./config";
 
 type Ticket = [
   number | bigint,

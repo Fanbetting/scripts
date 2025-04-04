@@ -1,18 +1,18 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetPlayerClient } from "../contracts/FanbetPlayer";
-import { algorand } from "../utils/constants";
+import { algorand } from "../utils/config";
 import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { decodeAddress } from "algosdk";
 
 async function retrieve() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   await algorand.account.ensureFundedFromEnvironment(
     executor.addr,
-    new AlgoAmount({ algos: 1000000 })
+    new AlgoAmount({ algos: 1000000 }),
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -22,7 +22,7 @@ async function retrieve() {
       appName: "FANBET LOTTERY APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -47,9 +47,8 @@ async function retrieve() {
     ...decodeAddress(executor.addr.toString()).publicKey,
   ]);
 
-  const playerBoxValue = await lotteryClient.appClient.getBoxValue(
-    playerBoxRef
-  );
+  const playerBoxValue =
+    await lotteryClient.appClient.getBoxValue(playerBoxRef);
 
   const playerDataview = new DataView(playerBoxValue.buffer);
   const playerAppID = BigInt(playerDataview.getBigUint64(0).toString());
@@ -61,7 +60,7 @@ async function retrieve() {
       appName: "FANBET PLAYER",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const ticketsLength = await playerClient.getTicketsLength({

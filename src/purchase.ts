@@ -1,5 +1,5 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorand } from "../utils/constants";
+import { algorand } from "../utils/config";
 import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { generateTickets } from "../utils/helpers";
@@ -9,14 +9,14 @@ const NUMBER_OF_TICKETS = 100;
 async function purchase() {
   const dispenser = await algorand.account.dispenserFromEnvironment();
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   const buyer = algorand.account.random();
   await algorand.account.ensureFunded(
     buyer,
     dispenser,
-    new AlgoAmount({ algo: 10000000 })
+    new AlgoAmount({ algo: 10000000 }),
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -26,7 +26,7 @@ async function purchase() {
       appName: "FANBET LOTTERY APP",
       defaultSender: buyer.addr,
       defaultSigner: buyer.signer,
-    }
+    },
   );
 
   const ticketPrice = await lotteryClient.state.global.ticketPrice();

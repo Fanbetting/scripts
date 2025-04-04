@@ -1,6 +1,6 @@
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorand } from "../utils/constants";
+import { algorand } from "../utils/config";
 import { LOTTERY_APP_ID } from "../utils/constants";
 
 async function payout() {

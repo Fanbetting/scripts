@@ -1,12 +1,12 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorand } from "../utils/constants";
+import { algorand } from "../utils/config";
 import { LOTTERY_APP_ID } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 
 async function reset() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -16,7 +16,7 @@ async function reset() {
       appName: "FANBET LOTTERY APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const ticketToken = await lotteryClient.state.global.ticketToken();

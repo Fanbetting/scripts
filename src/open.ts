@@ -1,10 +1,10 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
-import { algorand } from "../utils/constants";
+import { algorand } from "../utils/config";
 import { LOTTERY_APP_ID } from "../utils/constants";
 
 async function open() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   const lotteryClient = algorand.client.getTypedAppClientById(
@@ -14,7 +14,7 @@ async function open() {
       appName: "FANBET LOTTERY APP",
       defaultSender: executor.addr,
       defaultSigner: executor.signer,
-    }
+    },
   );
 
   const ticketToken = await lotteryClient.state.global.ticketToken();
