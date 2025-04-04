@@ -3,7 +3,7 @@ import { network } from "./config";
 export const FBET_ASSET_ID = 2456033705;
 
 export const LOTTERY_APP_ID =
-  network == "localnet" ? 1002 : network == "testnet" ? 736653573 : 2881824977;
+  network == "localnet" ? 1002 : network == "testnet" ? 736912004 : 2901647410;
 
 export const DISCOUNTER_APP_ID =
   network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;

@@ -149,7 +149,7 @@ export const getManagers = async (ticketToken: bigint | number) => {
 
     await algorand.send.assetOptIn({
       sender: manager,
-      assetId: ticketToken,
+      assetId: BigInt(ticketToken),
     });
   }
 

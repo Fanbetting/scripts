@@ -1,23 +1,26 @@
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
 import { FanbetDiscounterClient } from "../contracts/FanbetDiscounter";
 import {
-  algorand,
-  payoutDuration,
-  legacyDiscount,
-  regularDiscount,
-  price,
-  revealDuration,
-  submissionsDuration,
   LOTTERY_APP_ID,
   DISCOUNTER_APP_ID,
-  RANDONMESS_BEACON_APP_ID,
   REGISTRY_APP_ID,
   LEGACY_HOLDERS,
   PERCENTS,
+  PRICE,
+  PAYOUT_DURATION,
+  REVEAL_DURATION,
+  SUBMISSIONS_DURATION,
+  DECIMALS,
+  BEACON_APP_ID,
+  LEGACY_DISCOUNT,
+  REGULAR_DISCOUNT,
+  FBET_ASSET_ID,
+  ADMINISTRATOR_ADDRESS,
 } from "../utils/constants";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 import { getManagers } from "../utils/helpers";
+import { algorand, network } from "../utils/config";
 
 async function bootstrap() {
   const executor = algorand.account.fromMnemonic(
@@ -44,35 +47,43 @@ async function bootstrap() {
     },
   );
 
-  const { assetId } = await algorand.send.assetCreate({
-    decimals: 4,
-    total: BigInt(1100000000000),
-    defaultFrozen: false,
-    manager: executor,
-    assetName: "FanBet",
-    reserve: executor,
-    unitName: "FBET",
-    sender: executor,
-    signer: executor,
-  });
+  let token: bigint | number;
+
+  if (network === "mainnet") {
+    token = FBET_ASSET_ID;
+  } else {
+    const { assetId } = await algorand.send.assetCreate({
+      decimals: 4,
+      total: BigInt(1100000000000),
+      defaultFrozen: false,
+      manager: executor,
+      assetName: "FanBet",
+      reserve: executor,
+      unitName: "FBET",
+      sender: executor,
+      signer: executor,
+    });
+
+    token = assetId;
+  }
 
   await lotteryClient.send.bootstrap({
     args: {
-      price,
-      assetId,
-      payoutDuration,
-      revealDuration,
-      submissionsDuration,
-      decimals: 4,
-      discountId: DISCOUNTER_APP_ID,
-      beaconId: RANDONMESS_BEACON_APP_ID,
+      assetId: token,
+      price: PRICE,
+      decimals: DECIMALS,
+      beaconId: BEACON_APP_ID,
       allocationPercents: PERCENTS,
+      discountId: DISCOUNTER_APP_ID,
+      payoutDuration: PAYOUT_DURATION,
+      revealDuration: REVEAL_DURATION,
+      submissionsDuration: SUBMISSIONS_DURATION,
     },
     extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
-    assetReferences: [assetId],
+    populateAppCallResources: true,
   });
 
-  const managers = await getManagers(assetId);
+  const managers = await getManagers(token);
 
   for (let i = 0; i < managers.length; i++) {
     await lotteryClient.send.updateManagerAccount({
@@ -83,37 +94,51 @@ async function bootstrap() {
     });
   }
 
-  await algorand.send.payment({
-    receiver: discountClient.appAddress,
-    amount: AlgoAmount.Algos(1),
-    sender: executor,
-    signer: executor,
-  });
+  // await algorand.send.payment({
+  //   receiver: discountClient.appAddress,
+  //   amount: AlgoAmount.Algos(1),
+  //   sender: executor,
+  //   signer: executor,
+  // });
 
-  await discountClient.send.bootstrap({
-    args: {
-      legacyDiscount,
-      regularDiscount,
-      registryId: REGISTRY_APP_ID,
-    },
-    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
-  });
+  // await discountClient.send.bootstrap({
+  //   args: {
+  //     registryId: REGISTRY_APP_ID,
+  //     legacyDiscount: LEGACY_DISCOUNT,
+  //     regularDiscount: REGULAR_DISCOUNT,
+  //   },
+  //   extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE)),
+  // });
 
-  await discountClient.send.addLegacyHolders({
-    args: {
-      holders: LEGACY_HOLDERS.slice(0, 8),
-    },
-    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
-    populateAppCallResources: true,
-  });
+  // await discountClient.send.addLegacyHolders({
+  //   args: {
+  //     holders: LEGACY_HOLDERS.slice(0, 8),
+  //   },
+  //   extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
+  //   populateAppCallResources: true,
+  // });
 
-  await discountClient.send.addLegacyHolders({
-    args: {
-      holders: LEGACY_HOLDERS.slice(8),
-    },
-    extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
-    populateAppCallResources: true,
-  });
+  // await discountClient.send.addLegacyHolders({
+  //   args: {
+  //     holders: LEGACY_HOLDERS.slice(8),
+  //   },
+  //   extraFee: AlgoAmount.MicroAlgos(Number(ALGORAND_MIN_TX_FEE) * 2),
+  //   populateAppCallResources: true,
+  // });
+
+  if (network === "mainnet") {
+    await lotteryClient.send.updateAdminAccount({
+      args: {
+        newAdmin: ADMINISTRATOR_ADDRESS,
+      },
+    });
+
+    await discountClient.send.updateAdminAccount({
+      args: {
+        newAdmin: ADMINISTRATOR_ADDRESS,
+      },
+    });
+  }
 }
 
 bootstrap()
