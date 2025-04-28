@@ -1,9 +1,35 @@
 import { network } from "./config";
 
-export const FBET_ASSET_ID = 2456033705;
+export const INFO = {
+  FBET: {
+    lotteryAppId: 2901647410,
+    assetId: 2456033705,
+    decimals: BigInt(4),
+    price: 10000,
+  },
 
-export const LOTTERY_APP_ID =
-  network == "localnet" ? 1002 : network == "testnet" ? 736912004 : 2901647410;
+  USDC: {
+    lotteryAppId: 2957905817,
+    assetId: 31566704,
+    decimals: BigInt(6),
+    price: 2,
+  },
+
+  IPT: {
+    lotteryAppId: 2957950950,
+    assetId: 2342621554,
+    decimals: BigInt(7),
+    price: 250,
+  },
+};
+
+export const REGULAR_DISCOUNT = 5;
+export const LEGACY_DISCOUNT = 10;
+
+export const DEFAULT_LOTTERY_APP_ID = 0;
+export const DEFAULT_LOTTERY_ASSET_ID = 0;
+export const DEFAULT_LOTTERY_DECIMALS = BigInt(6);
+export const DEFAULT_LOTTERY_PRICE = 10;
 
 export const DISCOUNTER_APP_ID =
   network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;
@@ -13,12 +39,6 @@ export const BEACON_APP_ID =
 
 export const REGISTRY_APP_ID =
   network == "localnet" ? 1008 : network == "testnet" ? 84366825 : 760937186;
-
-export const LEGACY_DISCOUNT = 10;
-export const REGULAR_DISCOUNT = 5;
-
-export const DECIMALS = BigInt(4);
-export const PRICE = network == "localnet" ? 10 : 10000;
 
 export const PAYOUT_DURATION =
   network == "localnet" ? 1 : network == "testnet" ? 100 : 10000;

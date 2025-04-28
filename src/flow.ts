@@ -1,5 +1,4 @@
 import { Account, Address, decodeAddress, decodeUint64 } from "algosdk";
-import { LOTTERY_APP_ID } from "../utils/constants";
 import { TransactionSignerAccount } from "@algorandfoundation/algokit-utils/types/account";
 import { AlgoAmount } from "@algorandfoundation/algokit-utils/types/amount";
 import { FanbetLotteryClient } from "../contracts/FanbetLottery";
@@ -7,6 +6,10 @@ import { generateTickets } from "../utils/helpers";
 import { ALGORAND_MIN_TX_FEE } from "@algorandfoundation/algokit-utils";
 import { algorand } from "../utils/config";
 import { FanbetPlayerClient } from "../contracts/FanbetPlayer";
+import { INFO } from "../utils/constants";
+
+const asset: keyof typeof INFO = "FBET";
+const LOTTERY_APP_ID = INFO[asset].lotteryAppId;
 
 const NUMBER_OF_TICKETS = 800;
 const PLAYERS = 100;
@@ -17,7 +20,7 @@ const players: (Address & TransactionSignerAccount & { account: Account })[] =
 
 async function flow() {
   const executor = algorand.account.fromMnemonic(
-    process.env.EXECUTOR_MNEMONIC!
+    process.env.EXECUTOR_MNEMONIC!,
   );
 
   for (let i = 0; i < PLAYERS; i++) {
@@ -37,7 +40,7 @@ async function flow() {
           appName: "FANBET LOTTERY APP",
           defaultSender: player.addr,
           defaultSigner: player.signer,
-        }
+        },
       );
 
       const ticketPrice = await lotteryClient.state.global.ticketPrice();
@@ -62,7 +65,7 @@ async function flow() {
       ]);
 
       const registered = boxes.some(
-        (box) => box.nameRaw.toString() == playerBoxName.toString()
+        (box) => box.nameRaw.toString() == playerBoxName.toString(),
       );
 
       if (!registered) {
@@ -88,9 +91,8 @@ async function flow() {
             coverAppCallInnerTransactionFees: true,
           });
       } else {
-        const playerBoxValue = await lotteryClient.appClient.getBoxValue(
-          playerBoxName
-        );
+        const playerBoxValue =
+          await lotteryClient.appClient.getBoxValue(playerBoxName);
         const playerAppID = decodeUint64(playerBoxValue);
 
         console.log(`Player App ID: ${playerAppID}`);
@@ -147,7 +149,7 @@ async function flow() {
         appName: "FANBET LOTTERY APP",
         defaultSender: executor.addr,
         defaultSigner: executor.signer,
-      }
+      },
     );
 
     await lotteryClient.send.submitCommit({
@@ -173,7 +175,7 @@ async function flow() {
           appName: "FANBET LOTTERY APP",
           defaultSender: player.addr,
           defaultSigner: player.signer,
-        }
+        },
       );
 
       await lotteryClient.send.submitTickets({
@@ -220,7 +222,7 @@ async function flow() {
           appName: "FANBET LOTTERY APP",
           defaultSender: player.addr,
           defaultSigner: player.signer,
-        }
+        },
       );
 
       const encoder = new TextEncoder();
@@ -230,9 +232,8 @@ async function flow() {
         ...decodeAddress(player.toString()).publicKey,
       ]);
 
-      const playerBoxValue = await lotteryClient.appClient.getBoxValue(
-        playerBoxName
-      );
+      const playerBoxValue =
+        await lotteryClient.appClient.getBoxValue(playerBoxName);
 
       const playerAppID = decodeUint64(playerBoxValue);
 
@@ -243,7 +244,7 @@ async function flow() {
           appName: "FANBET PLAYER APP",
           defaultSender: player.addr,
           defaultSigner: player.signer,
-        }
+        },
       );
 
       const matches = await playerClient.getMatches();
@@ -254,7 +255,7 @@ async function flow() {
         matches.threeMatch > 0
       ) {
         console.log(
-          `Player ${player.addr} has won ${matches.fiveMatch} five-match, ${matches.fourMatch} four-match, and ${matches.threeMatch} three-match`
+          `Player ${player.addr} has won ${matches.fiveMatch} five-match, ${matches.fourMatch} four-match, and ${matches.threeMatch} three-match`,
         );
       }
 
@@ -287,14 +288,14 @@ async function prepareUser(
   user: Address & TransactionSignerAccount & { account: Account },
   executor: Address & TransactionSignerAccount & { account: Account },
   ticketToken: bigint,
-  ticketPrice: bigint
+  ticketPrice: bigint,
 ) {
   const dispenser = await algorand.account.localNetDispenser();
 
   await algorand.account.ensureFunded(
     user.addr,
     dispenser.addr,
-    AlgoAmount.Algos(1000)
+    AlgoAmount.Algos(1000),
   );
 
   await algorand.send.assetOptIn({
