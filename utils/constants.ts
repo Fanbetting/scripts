@@ -26,10 +26,9 @@ export const INFO = {
 export const REGULAR_DISCOUNT = 5;
 export const LEGACY_DISCOUNT = 10;
 
-export const DEFAULT_LOTTERY_APP_ID = 0;
-export const DEFAULT_LOTTERY_ASSET_ID = 0;
-export const DEFAULT_LOTTERY_DECIMALS = BigInt(6);
-export const DEFAULT_LOTTERY_PRICE = 10;
+export const ALGO_LOTTERY_PRICE = 10;
+export const ALGO_LOTTERY_APP_ID = 2965565351;
+export const ALGO_LOTTERY_DECIMALS = BigInt(6);
 
 export const DISCOUNTER_APP_ID =
   network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;

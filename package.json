@@ -10,7 +10,7 @@
     "reset": "ts-node src/reset.ts",
     "flow": "ts-node src/flow.ts",
     "open": "ts-node src/open.ts",
-    "copy": "cp ../contracts/smart_contracts/artifacts/fanbet_lottery/FanbetLottery.arc32.json ../contracts/smart_contracts/artifacts/fanbet_player/FanbetPlayer.arc32.json ../contracts/smart_contracts/artifacts/fanbet_discounter/FanbetDiscounter.arc32.json dist/",
+    "copy": "cp ../contracts/smart_contracts/artifacts/fanbet_lottery/FanbetLottery.arc32.json  ../contracts/smart_contracts/artifacts/fanbet_algo_lottery/FanbetAlgoLottery.arc32.json ../contracts/smart_contracts/artifacts/fanbet_player/FanbetPlayer.arc32.json ../contracts/smart_contracts/artifacts/fanbet_discounter/FanbetDiscounter.arc32.json dist/",
     "generate": "npm run copy && npx tsx src/generate.ts"
   },
   "author": "",
