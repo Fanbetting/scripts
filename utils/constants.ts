@@ -31,7 +31,7 @@ export const ALGO_LOTTERY_APP_ID = 2965565351;
 export const ALGO_LOTTERY_DECIMALS = BigInt(6);
 
 export const DISCOUNTER_APP_ID =
-  network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 2881825331;
+  network == "localnet" ? 1005 : network == "testnet" ? 736077084 : 3100676520;
 
 export const BEACON_APP_ID =
   network == "localnet" ? 1007 : network == "testnet" ? 600011887 : 1615566206;
